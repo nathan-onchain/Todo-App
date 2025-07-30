@@ -24,3 +24,11 @@ pub async fn login(pool: web::Data<sqlx::PgPool>, payload: web::Json<LoginUser>)
         Err(e) => HttpResponse::Unauthorized().body(e),
     }
 }
+
+#[get("/me")]
+pub async fn get_me(claims: Claims) -> HttpResponse {
+    HttpResponse::Ok().json(serde_json::json!({
+        "message": "Access granted to protected route",
+        "user_id": claims.sub
+    }))
+}

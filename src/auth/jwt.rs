@@ -27,3 +27,25 @@ pub fn verify_jwt(token: &str) -> Result<Claims, jsonwebtoken::errors::Error> {
     )
     .map(|data| data.claims)
 }
+impl FromRequest for Claims {
+    type Error = ActixError;
+    type Future = Ready<Result<Self, Self::Error>>;
+
+    fn from_request(req: &HttpRequest, _: &mut actix_web::dev::Payload) -> Self::Future {
+        let auth_header = req.headers().get("Authorization");
+
+        if let Some(header_value) = auth_header {
+            if let Ok(auth_str) = header_value.to_str() {
+                if auth_str.starts_with("Bearer ") {
+                    let token = &auth_str[7..];
+                    match verify_jwt(token) {
+                        Ok(data) => return ready(Ok(data.claims)),
+                        Err(_) => return ready(Err(actix_web::error::ErrorUnathorized("In")))
+                    }
+                }
+            }
+        }
+
+        ready(Err(actix_web::error::ErrorUnauthorized("No Authorization Header")))
+    } 
+}
