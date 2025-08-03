@@ -1,5 +1,7 @@
 use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey};
 use serde::{Serialize, Deserialize};
+use std::future::{Ready, ready};
+use actix_web::{FromRequest, HttpRequest, Error as ActixError};
 use std::env;
 
 #[derive(Serialize, Deserialize)]
@@ -39,8 +41,8 @@ impl FromRequest for Claims {
                 if auth_str.starts_with("Bearer ") {
                     let token = &auth_str[7..];
                     match verify_jwt(token) {
-                        Ok(data) => return ready(Ok(data.claims)),
-                        Err(_) => return ready(Err(actix_web::error::ErrorUnathorized("In")))
+                        Ok(data) => return ready(Ok(data)),
+                        Err(_) => return ready(Err(actix_web::error::ErrorUnauthorized("In")))
                     }
                 }
             }
