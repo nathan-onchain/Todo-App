@@ -1,4 +1,4 @@
-use actix_web::{get, web, HttpResponse};
+use actix_web::{get, web, HttpResponse, FromRequest};
 use crate::{services::user_service, models::users::{RegisterUser, LoginUser}};
 use crate::auth::jwt::Claims;
 use serde_json::json;
