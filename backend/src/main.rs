@@ -19,6 +19,12 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
+            .wrap(
+                Cors::default()
+                    .allow_any_origin()
+                    .allow_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                    .allow_headers(vec![header::AUTHORIZATION, header::CONTENT_TYPE])
+            )
             .app_data(web::Data::new(pool.clone()))
             .configure(user_routes)
     })

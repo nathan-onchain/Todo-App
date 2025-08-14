@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Toaster as Sonner } from "./components/ui/sonner";
+import { TooltipProvider } from "./components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pages
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import NotFound from "./pages/NotFound";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+// Create React Query client
+const queryClient = new QueryClient();
 
-export default App
+const App = () => (
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        {/* Toast Notifications */}
+        <Sonner position="top-right" />
+
+        {/* Routes */}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          {/* Catch-all route for 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+
+      {/* Devtools for debugging queries (remove in production if not needed) */}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </BrowserRouter>
+);
+
+export default App;
+ 
