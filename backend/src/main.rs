@@ -2,6 +2,10 @@ use actix_web::{App, HttpServer, web};
 use crate::routes::user_routes::user_routes;
 use crate::config::load_env;
 use crate::database::db::establish_connection;
+use crate::auth::validation::check_username;
+use actix_cors::Cors;
+use actix_web::http::header;
+
 
 mod config;
 mod routes;
@@ -22,11 +26,12 @@ async fn main() -> std::io::Result<()> {
             .wrap(
                 Cors::default()
                     .allow_any_origin()
-                    .allow_methods(vec!["GET", "POST", "PUT", "DELETE"])
-                    .allow_headers(vec![header::AUTHORIZATION, header::CONTENT_TYPE])
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                    .allowed_headers(vec![header::AUTHORIZATION, header::CONTENT_TYPE])
             )
             .app_data(web::Data::new(pool.clone()))
             .configure(user_routes)
+            .service(check_username)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

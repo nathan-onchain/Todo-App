@@ -1,4 +1,4 @@
-use actix_web::{get, web, HttpResponse};
+use actix_web::{get, web, HttpResponse, HttpRequest, HttpMessage};
 use crate::{services::user_service, models::users::{RegisterUser, LoginUser}};
 use crate::auth::jwt::Claims;
 use serde_json::json;
@@ -26,10 +26,15 @@ pub async fn login(pool: web::Data<sqlx::PgPool>, payload: web::Json<LoginUser>)
     }
 }
 
-#[get("/me")]
-pub async fn get_me(claims: Claims) -> HttpResponse {
-    HttpResponse::Ok().json(serde_json::json!({
-        "message": "Access granted to protected route",
-        "user_id": claims.sub
-    }))
+
+#[get("/get_me")]
+pub async fn get_me(req: HttpRequest) -> HttpResponse {
+    if let Some(user_id) = req.extensions().get::<String>() {
+        HttpResponse::Ok().json(serde_json::json!({
+            "message": "Access granted to protected route",
+            "user_id": user_id
+        }))
+    } else {
+        HttpResponse::Unauthorized().body("No claims found")
+    }
 }

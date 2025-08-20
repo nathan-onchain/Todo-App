@@ -11,7 +11,7 @@ interface LoginFormData {
 }
 
 const LoginPage = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const { register, handleSubmit, formState: { errors, isValid} } = useForm<LoginFormData>({mode: "onChange"});
 
   const onSubmit = (data: LoginFormData) => {
     console.log("Login data:", data);
@@ -77,7 +77,7 @@ const LoginPage = () => {
                 )}
               </div>
 
-              <Button type="submit" className="w-full shadow-cta hover:shadow-lg transition-all duration-300">
+              <Button type="submit" disabled={!isValid} className="w-full shadow-cta hover:shadow-lg transition-all duration-300">
                 Sign In
               </Button>
 

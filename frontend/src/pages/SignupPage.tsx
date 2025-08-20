@@ -12,7 +12,7 @@ interface SignupFormData {
 }
 
 const SignupPage = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<SignupFormData>();
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<SignupFormData>({mode: "onChange"});
 
   const onSubmit = (data: SignupFormData) => {
     console.log("Signup data:", data);
@@ -51,6 +51,19 @@ const SignupPage = () => {
                     minLength: {
                       value: 3,
                       message: "Username must be at least 3 characters"
+                    },
+                    validate: async (value) => {
+                      if (!value) return "Username is required";
+
+                      try {
+                        const res = await fetch(`http://localhost:8000/check-username?username=${encodeURIComponent(value)}`);
+                        if (!res.ok) return "Error checking username availability";
+
+                        const data = await res.json();
+                        return data.available || "Username is already taken";
+                      } catch {
+                        return "Error connecting  to server";
+                      }
                     }
                   })}
                 />
@@ -97,7 +110,7 @@ const SignupPage = () => {
                 )}
               </div>
 
-              <Button type="submit" className="w-full shadow-cta hover:shadow-lg transition-all duration-300">
+              <Button type="submit" disabled={!isValid} className="w-full shadow-cta hover:shadow-lg transition-all duration-300">
                 Create Account
               </Button>
 

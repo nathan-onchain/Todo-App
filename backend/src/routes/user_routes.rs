@@ -1,4 +1,6 @@
 use crate::auth::jwt_middleware::JwtMiddleware;
+use crate::controllers::user_controller::{register, login, get_me};
+use actix_web::web;
 
 pub fn user_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
@@ -9,6 +11,6 @@ pub fn user_routes(cfg: &mut web::ServiceConfig) {
     .service(
         web::scope("")
             .wrap(JwtMiddleware) // Protects this scope
-            .route("/get_me", web::get().to(get_me))
+            .service(get_me)
     );
 }

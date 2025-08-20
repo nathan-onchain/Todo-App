@@ -47,7 +47,7 @@ where
 
     forward_ready!(service);
 
-    fn call(&self, mut req: ServiceRequest) -> Self::Future {
+    fn call(&self, req: ServiceRequest) -> Self::Future {
         let auth_header = req.headers().get("Authorization").and_then(|h| h.to_str().ok());
 
         if let Some(header) = auth_header {

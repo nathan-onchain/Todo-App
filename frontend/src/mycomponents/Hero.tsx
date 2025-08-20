@@ -25,9 +25,9 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-              <Button size="lg" className="shadow-cta hover:shadow-lg transition-all duration-300 text-lg px-8 py-3">
-                Get Started Free
-              </Button>
+              <Button className="shadow-cta hover:shadow-lg transition-all duration-300" asChild>
+            <a href="/signup">Get Started Free</a>
+          </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-3">
                 Watch Demo
               </Button>
